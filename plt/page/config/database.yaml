@@ -1,0 +1,27 @@
+# <?php die(); ?>
+
+# devel
+devel:
+  driver:     mysql
+  #host:       113.105.169.15
+  #port:				3360
+  #login:      songfou
+  #password:   songfou
+  database:  mail_db 
+  charset:    utf8
+  #host:       ec2-54-234-224-139.compute-1.amazonaws.com
+  host: localhost
+  login:      songfou
+  password:   songfou
+  #database:   songfou_finance_db
+  #charset:    utf8
+  prefix:
+
+# test
+test:
+  _use: devel
+
+# deploy
+deploy:
+  _use: devel
+

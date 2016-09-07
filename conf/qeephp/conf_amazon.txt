@@ -1,0 +1,10 @@
+# qeephp的安装个数
+svr_num=1
+
+# 安装机器的信息(IP,ssh端口,用户名,密码,安装目录)
+ip[0]=10.150.93.61
+ssh_port[0]=22
+user[0]=ubuntu
+passwd[0]=ubuntu
+install_dir[0]=/var/www/accountsys.simpysam.com
+

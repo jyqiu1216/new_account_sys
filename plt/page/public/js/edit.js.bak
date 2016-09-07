@@ -1,0 +1,134 @@
+
+var schoolArr = [];
+var dormArr = [];
+var tmpArr = [];
+
+function removeOptions(selectObj)
+{
+     if (typeof selectObj != 'object')
+     {
+          selectObj = document.getElementById(selectObj);
+     }
+     var len = selectObj.options.length;
+     for (var i=0; i < len; i++)
+     {
+     		selectObj.options[0] = null;
+     }
+}
+function setSelectOption(selectObj, optionList, firstOption, selected)
+{
+	if (typeof selectObj != 'object')
+	{
+		selectObj = document.getElementById(selectObj);
+	}
+	removeOptions(selectObj);
+	 var start = 0;
+	 if (firstOption)
+	 {
+	 	selectObj.options[0] = new Option(firstOption, '');
+	 	start ++;
+	 }
+	 var len = optionList.length;
+	 for (var i=0; i < len; i++)
+	 {
+		 selectObj.options[start] = new Option(optionList[i].txt, optionList[i].val);
+		 if(selected == optionList[i].val)
+		 {
+		 	selectObj.options[start].selected = true;
+		 }
+		 start ++;
+	 }
+}				
+function setSchool( school )
+{
+	if( "" == school )
+	{		
+		var tmpArr = [];
+		setSelectOption('school_id', tmpArr, '-请选择学校-');
+		setSelectOption('dorm_id', tmpArr, '-请选择宿舍-');
+		//alert("null school");
+	}else
+	{
+		setSelectOption('school_id', schoolArr[school], '-请选择学校-');
+	}
+}
+function setDorm( dorm )
+{
+	if( "" == dorm )
+	{
+		var tmpArr = [];
+		setSelectOption('dorm_id', tmpArr, '-请选择宿舍-');
+	}else
+	{
+		setSelectOption('dorm_id', dormArr[dorm], '-请选择宿舍-');
+	}
+	
+}
+
+
+//开始处理jquery事件
+$(document).ready(function(){
+	//$.formValidator.initConfig({formid:"regist",onerror:function(msg){alert(msg)}});
+	$.formValidator.initConfig({formid:"regist",onerror:function(msg){alert(msg);}});
+	$("#username").formValidator
+	({onshow:"登录手机不能修改",
+	onfocus:"以13或者15,头"
+	oncorrect:"OK"}).inputValidator
+	({min:11,max:11,onerror:"手机长度不对,请确认"}).regexValidator
+	({regexp:"mobile",
+	datatype:"enum",onerror:"手机号码格式不正确"});
+	
+	$("#name").formValidator
+	({onshow:"您的名字，方便我们联系您",
+	onfocus:"名字不能为空",
+	oncorrect:"OK"}).inputValidator({min:1,onerror:"名字不能为空哦,请确认"});
+
+	$("#password").formValidator
+	({onshow:"如要修改密码，请输入新密码，否则留空",
+	onfocus:"密码不能为空",
+	oncorrect:"如要修改密码，请输入新密码，否则留空"}).inputValidator({min:0,onerror:"密码不能为空,请确认"});
+
+	$("#password2").formValidator
+	({onshow:"如要修改密码，请重复输入新密码，否则留空",
+	onfocus:"两次密码必须一致哦",
+	oncorrect:"如要修改密码，请重复输入新密码，否则留空"}).inputValidator
+	({min:0,onerror:"重复密码不能为空,请确认"}).compareValidator
+	({desid:"password",
+	operateor:"=",onerror:"2次密码不一致,请确认"});	
+	
+	$("input:radio[name='sexy']").formValidator().inputValidator({min:1,max:1,onerror:"请选择您的性别"});
+	
+	$("#area_id").formValidator
+	({oncorrect:"OK"}).inputValidator({min:1,onerror:"还没有选择地区哦，请确认"});
+	
+	$("#school_id").formValidator
+	({oncorrect:"OK"}).inputValidator({min:1,onerror:"还没有选择学校哦，请确认"});
+	
+	$("#dorm_id").formValidator
+	({oncorrect:"OK"}).inputValidator({min:1,onerror:"还没有选择宿舍哦，请确认"});	
+	
+	$("#room").formValidator
+	({onshow:"请输入你所在的房号，例如:501",
+	onfocus:"房号不能为空",
+	oncorrect:"OK"}).inputValidator({min:1,onerror:"房号不能为空,请确认"});	
+	
+	/* Ajax过渡效果 */
+	$("#loading").ajaxStart(function(){
+		var offset= $("#username").offset();
+	
+	
+		$("#loading").css({
+		"left": offset.left+160,
+		"top": offset.top+80
+	
+		});
+		$("#loading").show();
+	
+	});
+	
+	$("#loading").ajaxStop(function(){
+		$("#loading").fadeOut(1000);
+	
+	});
+
+});

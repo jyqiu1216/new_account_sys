@@ -1,0 +1,243 @@
+返回码
+    1. 系统内部错误
+    2. 请求参数错误
+    3. 找不到当前产品的数据
+    4. 当前产品的数据已经被绑定
+    5. 非法的游戏内注册
+    6. 该邮箱已注册过
+    7. 邮箱没有注册
+    8. 邮箱的密码不一致
+    9. 帐号受限
+    10. 邮箱没有绑定任何产品
+    11. 邮箱没有绑定当前产品
+
+表结构
+    1. account_user表:
+        rid(hash)            =   自己维护的
+        email(global)        =   email
+        passwd               =   密码的加密串
+        th_id[0](global)     =   th_id[1]登录的id
+        type                 =   帐号类型(leyi, facebook, google)
+        register_platfrom    =   注册的平台
+        login_platform       =   登录平台
+        ctime                =   注册时间(当前)
+        utime                =   更新帐号的时间
+        status               =   帐号状态(0:正常, 1:受限)
+        logstatus            =   帐号登录和注销状态(0: 登录, 1: 注销)
+        pwd_flag             =   对密码修改的flag(0: 正常情况; 1: 密码被修改)
+        pwd_seq              =   对帐号密码做操作的时候,会自增,初始化为0
+
+        
+    2. account_product表:
+        app_uid(hash)        =   产品的uid
+        r_pid(rage)          =   产品的唯一标识: "pid_0 + product_platform"
+        rid(global)          =   自己维护的
+        device(global)       =   设备device
+        lgtime               =   登录时间
+        btime                =   绑定时间
+        status               =   绑定状态(0: 待绑定, 1: 已绑定)
+        product_info         =   产品信息
+                                {
+                                    "r_pid": 
+                                    {
+                                        "pid": 12345,
+                                        "idfa": "sadsadsadsad",
+                                        "sy": "Mac_OS_X_10.10.5",
+                                        "vs": "1.0",
+                                        "platform": "ios"
+                                    },
+                                    "binding_vs": "1.0"
+                                }   
+
+===================================================================================================
+
+
+一. 帐号系统的请求格式
+    1. url_prefix/?request=time=${time}&pid=${pid}&platform=${platform}&did=${did}&uid=${uid}&vs=${vs}&sy=${sy}&idfa=${idfa}&command=${command}&key0=${value0}
+    2. request的值需要加密,加密方法:
+        (1) (raw_url + 加密串)求md5string ==> raw_md5str
+        (2) (raw_url + md5str)做rc4 + base64encode ==> encode_url
+    3. 密码传输的协议
+        (passwd + 固定串)求md5 ==> passwd的加密串
+    4. 请求的校验
+        (1) (encode_url)做base64decode + r4 ==> received_url + received_md5str
+        (2) (received_url + 加密串)求md5string ==> received_md5str与raw_md5str做比较
+            相同: 则认为请求来源是可靠的(received_url == raw_url)
+            不相同: 则认为请求来源不可靠,返回黑客页面
+        (3) 提取received_url中的time参数,判断请求是否过期
+            没过期: 则正常处理
+            过期: 则返回重试页面    
+    5. 交互协议以新的协议为标准
+        
+===================================================================================================       
+        
+        
+二. 帐号系统支持的请求类型
+
+    // ******************************************* //
+    1. 登录帐号
+       (1) 请求 command=login&key0=${email}&key1=${passwd}&key2=${th_id}&key3=${login_platfrom}
+            key0 = ${email}: 邮箱
+            key1 = ${passwd}: 密码的加密串
+            key2 = ${th_id}: 第三方登录(fb_id:facebook_snow)
+            key3 = ${login_platfrom}: 登录的平台(web,ios,android)
+        (2) 返回
+            客户端: rid
+        (3) 序列化:
+            account_user表:
+            utime                =   curtime
+            logstatus            =   0: 登录
+        
+    // ******************************************* //
+    2. 注销用户
+        (1) 请求
+            command=logout&key0=${rid}&key1=${email}&key2=${passwd}&key3=${th_id}
+        (2) 返回
+            成功与否
+        (3) 序列化:
+            account_user表:
+            utime                =   curtime    
+            logstatus            =   1: 注销
+    // ******************************************* //
+    3. 注册帐号
+        (1) 请求: command=register&key0=${email}&key1=${passwd}&key2=${th_id}&key3=${type}&key4=${register_platfrom}
+            key0 = ${email}: 邮箱
+            key1 = ${passwd}: 密码的加密串
+            key2 = ${th_id}: 第三方注册
+            key3 = ${type}: 帐号类型(leyi,facebook)
+            key4 = ${register_platfrom}: 注册的平台(web,ios,android)
+        (2) 返回
+            (a) 客户端: rid
+            (b) 发送激活邮件到玩家所注册的邮箱
+                1) 不存在${device}
+                    组普通的激活邮件
+                2) 存在${device}
+                    组激活绑定产品的激活邮件
+            (c) 游戏内注册需要发游戏邮件
+            
+            
+    // ******************************************* //
+    4. 激活帐号
+        (1) 请求: command=active&key0=${rid}&key1=${email}&key2=${passwd}&key3=${th_id}&key4=${type}&key5=${register_platfrom}
+            key0 = ${rid}: 帐号唯一码
+            key2 = ${email}: 邮箱
+            key3 = ${passwd}: 密码的加密串
+            key3 = ${th_id}: 第三方id
+            key4 = ${type}: 注册类型(leyi/facebook)
+            key5 = ${register_platfrom}: 注册平台(web/ios)
+
+            
+        (2) 返回
+            (a) 页面: 激活成功或者激活参数有误
+            (b) 发送后台邮件
+            (c) pro系统的update接口返回用户的登录状态
+        (3) 序列化:
+            (a) account_user表:
+                utime                =   curtime
+                status               =   0: 正常
+                logstatus            =   0: 登录
+                pwd_seq              =   0
+               
+        (3) 序列化:
+            (a) account_user表:
+                rid(hash)            =   生成唯一
+                email(global)        =   ${email}
+                passwd               =   ${passwd}
+                ${th_id}[0](global)  =   ${th_id}[1]
+                type                 =   帐号类型(leyi,facebook)
+                register_platfrom    =   ${register_platfrom}
+                login_platform       =   
+                ctime                =   curtime
+                utime                =   curtime
+                status               =   1:待激活
+                logstatus            =   1: 注销
+                pwd_seq              =   0                   
+    
+    // ******************************************* //
+    5. 游客注册
+    (1) 请求: command=visitor_register
+    (2) 返回
+        游客注册成功与否
+    (3) 序列化
+        app_uid(hash)        =   产品的uid
+        r_pid(rage)          =   产品的唯一标识: "pid_0 + product_platform"
+        device(global)       =   设备device
+        lgtime               =   登录时间
+        status               =   绑定状态(0: 待绑定, 1: 已绑定)
+        product_info         =   产品信息
+                                {
+                                    "r_pid": 
+                                    {
+                                        "pid": 12345,
+                                        "idfa": "sadsadsadsad",
+                                        "sy": "Mac_OS_X_10.10.5",
+                                        "vs": "1.0",
+                                        "platform": "ios"
+                                    },
+                                    "binding_vs": "1.0"
+                                }   
+    
+    
+    // ******************************************* //
+    6. 登录产品
+        (1) 请求: command=landing&key0=${rid}&key1=${email}&key2=${passwd}&key3=${th_id}
+        (2) 返回
+            (a) pro系统
+                登录成功与否
+        (3) 序列化
+            account_game表:
+                lgtime               =  curtime
+                product_info         =  产品信息
+                                        {
+                                            "pid_0 + game_platform": 
+                                            {
+                                                "pid": 12345,
+                                                "device": "sdsfdcdf",
+                                                "idfa": "sadsadsadsad",
+                                                "sy": "Mac_OS_X_10.10.5",
+                                                "vs": "1.0"
+                                                "platform": "ios"
+                                            },
+                                        }   
+            
+    
+    // ******************************************* //
+    7. 忘记密码
+        (1) 请求: command=forget_passwd&key0=${email}
+        (2) 返回
+            修改成功与否,发重置密码邮件
+
+    
+    // ******************************************* //
+    8. 修改密码
+        (1) 请求: command=change_passwd&key0=${email}
+        (2) 返回
+            修改成功与否,发重置密码邮件
+    
+    // ******************************************* //
+    9. 重置密码
+        (1) 请求: command=reset_passwd&key0=${email}&key1=${reset_passwd}&key2=${passwd_seq}
+            key0 = ${email}: 邮箱
+            key1 = ${reset_passwd}: 重置密码的加密串
+            key2 = ${passwd_seq}: 重置密码的seq号
+        (2) 序列化
+            account_user表
+                passwd               =   密码的加密串
+                utime                =   更新帐号的时间
+                pwd_seq              =   对帐号密码做操作的时候,会自增,初始化为0
+
+
+    11. 绑定产品
+        (1) 请求: command=binding_product&key0=${email}&key1=${passwd}&key2=${th_id}
+                  
+                  
+    12. 绑定第三方到现有帐号  
+        
+===================================================================================================
+    
+    
+三. 客户端登录游戏走init接口
+
+
+四. 帐号在游戏的中是否处于登录状态,通过update接口返回
+

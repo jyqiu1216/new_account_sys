@@ -1,0 +1,3 @@
+#################################### account_sys ####################################
+*/1 * * * * cd /ebs_plt/account_sys/tool/mail_tool; ./mail_tool.sh >> mail_tool.log 2>&1
+1 * * * * cd /ebs_plt/account_sys/tool/upload_log; ./upload_log.sh >> /dev/null 2>&1

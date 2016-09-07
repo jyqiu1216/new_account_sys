@@ -1,0 +1,10 @@
+# modules的安装个数
+svr_num=1
+
+# 安装机器的信息(IP,ssh端口,用户名,密码,安装目录)
+ip[0]=54.223.156.94
+ssh_port[0]=22
+user[0]=bitnami
+passwd[0]=bitnami
+install_dir[0]=/var/www/op.simpysam.com/account_sys
+

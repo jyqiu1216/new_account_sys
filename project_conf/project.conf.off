@@ -1,0 +1,17 @@
+# [PROJECT_INFO]
+# 运行环境(0:线下; 1:线上)
+environment=0
+
+# [AWS_INFO]
+######    aws service info    #######
+# aws的dynamodb服务
+AwsServiceName="dynamodb"
+# 地区
+AwsServiceRegion="cn-north-1"
+# 地区域名后缀
+AwsDomainSuffix="amazonaws.com.cn"
+# aws的dynamodb的接口
+AwsTargetPrefix="DynamoDB_20120810"
+# aws服务的权限密钥
+AccessKey="AKIAPSCE56RMEYAIMHBA"
+SecretAccessKey="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"

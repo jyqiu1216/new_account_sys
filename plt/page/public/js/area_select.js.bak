@@ -1,0 +1,50 @@
+
+	var schoolArr = [];
+	var dormArr = [];
+	var tmpArr = [];
+	
+	function removeOptions(selectObj)
+	{
+	     if (typeof selectObj != 'object')
+	     {
+	          selectObj = document.getElementById(selectObj);
+	     }
+	     var len = selectObj.options.length;
+	     for (var i=0; i < len; i++)
+	     {
+	     		selectObj.options[0] = null;
+	     }
+	}
+	function setSelectOption(selectObj, optionList, firstOption, selected)
+	{
+		if (typeof selectObj != 'object')
+		{
+			selectObj = document.getElementById(selectObj);
+		}
+		removeOptions(selectObj);
+		 var start = 0;
+		 if (firstOption)
+		 {
+		 	selectObj.options[0] = new Option(firstOption, '');
+		 	start ++;
+		 }
+		 var len = optionList.length;
+		 for (var i=0; i < len; i++)
+		 {
+			 selectObj.options[start] = new Option(optionList[i].txt, optionList[i].val);
+			 if(selected == optionList[i].val)
+			 {
+			 	selectObj.options[start].selected = true;
+			 }
+			 start ++;
+		 }
+	}				
+	function setSchool( school )
+	{		
+		
+		setSelectOption('school_id', schoolArr[school], '-��ѡ��ѧУ-');
+	}
+	function setDorm( dorm )
+	{
+		setSelectOption('dorm_id', dormArr[dorm], '-��ѡ������-');
+	}

@@ -1,0 +1,157 @@
+@charset "utf-8";
+/* CSS Document */
+
+body {
+	margin: 0;
+	padding: 0;
+	width:100%;
+	font-size: 12pt;
+	font-family : Arial;
+}
+
+a{
+	text-decoration:none;
+	font-size: 12pt;
+	font-family : sans-serif;
+}
+
+.header{
+	width:100%;
+	overflow:hidden;
+	height:40px;
+	position:absolute;
+	top:0px;
+	left:0px;
+	text-align:center;
+	vertical-align:bottom;
+	border-bottom:3px solid #e5e5e5;
+	padding-top:5px;
+}
+
+.content{
+	width:100%;
+	margin: 0;
+	padding: 0;
+	position:absolute;
+	top:40px;
+	bottom:0;
+}
+
+.content table{
+	width:100%;
+}
+
+.content td{
+	width:25%;
+	word-break: break-all;
+	line-height:0;
+	font-size: 12pt;
+	font-family : Arial;
+}
+
+.content p{
+	color:grey;
+	font-style:italic;
+	text-decoration:none;
+}
+
+.questions{
+	width: 300px;
+	position:absolute;
+	top:0;
+	left:0;
+	bottom:0;
+	overflow:auto;
+	border-right:3px solid #e5e5e5;
+}
+
+.content .answers{
+	position:absolute;
+	top:0;
+	left:300px;
+	bottom:0;
+	right:0;
+	overflow:auto;
+}
+
+/**/
+.q_list{
+	padding:0;
+}
+
+.q_list li{
+	float:left;
+	position:relative;
+	display:inline;
+	width:270px;
+	height:25px;
+	word-break:break-all;
+	overflow:hidden;
+}
+
+.q_list li a{
+	position:relative;
+	top:0;
+	left:15px;
+}
+
+.answers .submit{
+	width:100%;
+	height:30px;
+	float:left;
+	position:relative;
+	border-bottom:3px solid #e5e5e5;
+}
+
+.submit li{
+	float:right;
+	position:relative;
+	display:inline;
+	margin-right:40px;
+}
+
+.a_list{
+	padding:0;
+}
+
+.a_list li{
+	float:left;
+	position:relative;
+	display:inline;
+	width:500px;
+	height:40px;
+	word-break:break-all;
+	overflow:hidden;
+	margin-left:10px;
+}
+
+.new_form{
+	width:100%;
+	margin:50px auto auto auto;
+	padding:0;
+	position:relative;
+}
+
+.large_form{
+	width:100%;
+	margin:auto;
+	padding:5;
+	position:relative;
+}
+
+.new_form table{
+	border:1px solid #e5e5e5;
+}
+
+.new_form td{
+	border:1px solid #e5e5e5;
+	padding:5px;
+	font-size: 12pt;
+	font-family : Arial;
+}
+
+.new_form select{
+	width:100px;
+}
+
+

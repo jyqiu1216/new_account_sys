@@ -1,0 +1,26 @@
+# account系统的安装个数
+svr_num=3
+
+# 安装机器的信息(IP,ssh端口,用户名,密码,安装目录)
+ip[0]=10.150.93.61
+ssh_port[0]=22
+user[0]=ubuntu
+passwd[0]=ubuntu
+install_dir[0]=/var/www/account.simpysam.com
+
+
+# 安装机器的信息(IP,ssh端口,用户名,密码,安装目录)
+ip[1]=10.237.181.3
+ssh_port[1]=22
+user[1]=ubuntu
+passwd[1]=ubuntu
+install_dir[1]=/var/www/account.simpysam.com
+
+
+# 安装机器的信息(IP,ssh端口,用户名,密码,安装目录)
+ip[2]=10.150.61.176
+ssh_port[2]=22
+user[2]=ubuntu
+passwd[2]=ubuntu
+install_dir[2]=/var/www/account.simpysam.com
+

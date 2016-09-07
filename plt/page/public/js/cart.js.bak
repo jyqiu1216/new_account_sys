@@ -1,0 +1,376 @@
+/*
+封装购物车处理、页面js
+@author allenhuang
+@date 2010-3-28
+*/
+/////////////////////////////////////////////////////////////////////////////////////
+//购物车封装
+//添加到购物车
+var isLoading = false;
+var showHelp = false;
+
+function addCart( id )
+{
+	if( isLoading )
+	{
+		return;
+	}
+	//alert("add");
+	$.post("/songfou/public/index.php?controller=cart&action=add",{"menu_id":id},function (data, textStatus){				
+		//alert(data);
+		alert(data.msg);
+		if( 0 != data.code )
+		{
+			location.reload();
+			return;
+		}
+		genCartPage(data);		
+	},"json");		
+	return;
+}
+//更新购物车
+function updateCart( id,newNum,oldNum )
+{	
+	if( isLoading )
+	{
+		return;
+	}
+	
+	if( newNum == oldNum )
+	{
+		return;
+	}	
+	$.post("/songfou/public/index.php?controller=cart&action=update",{"menu_id":id,"num":newNum},function (data, textStatus){				
+		alert(data.msg);
+		if( 0 != data.code )
+		{
+			location.reload();
+			return;
+		}
+		genCartPage(data);		
+	},"json");	
+	
+	return;
+}
+
+function balanceCart()
+{
+	if( isLoading )
+	{
+		return;
+	}
+	//alert("balance");
+	$.post("/songfou/public/index.php?controller=cart&action=balance",{"menu_id":0},function (data, textStatus){				
+		alert(data.msg);	
+		location.reload();	
+	},"json");	
+}
+
+function removeCart()
+{
+	//清空购物车
+	$("tr[id^='menu_']").each(function(){		
+		$(this).remove();
+	}	
+	);
+	//隐藏结算按钮
+	$("#balance").hide();
+	$("#total_price").hide();		
+	$("#notchoose").show();		
+}
+//生成、更新购物车爷们
+function genCartPage( data )
+{
+	//更新购物车所有菜单
+	for( var order in data.cart )
+	{
+		if( $("#menu_" + data.cart[order].id).html() != null )
+		{
+			var oldNum = $("#menu_" + data.cart[order].id + " input").next().attr("value");
+			if( oldNum != data.cart[order].num )
+			{
+				$("#menu_" + data.cart[order].id + " input").next().attr("value",data.cart[order].num);
+				$("#menu_" + data.cart[order].id + " input").attr('value',data.cart[order].num);
+				$("#menu_" + data.cart[order].id + " :nth-child(5)").html("<b>"+data.cart[order].tprice+"</b>");
+			}
+						
+		}else
+		{
+			var showOrder = "";
+			showOrder = "<TR id='menu_"+data.cart[order].id+"'>";
+			showOrder += "<TD><B>"+data.cart[order].name+"</B> </TD>";
+			showOrder += "<TD><B>"+data.cart[order].price+"</B> </TD>";
+			showOrder += "<TD><input size='2' class='updatecart' value='"+data.cart[order].num+"' alt='"+data.cart[order].id+"'><input type='hidden' value='"+data.cart[order].num+"'> </TD>\n";
+			//showOrder += "<TD><input size='2' class='updatcart' value='"+data.cart[order].num+"'> </TD>";
+			showOrder += "<TD><a href='#' class='clearcart' alt='"+data.cart[order].id+"'>删除</a> </TD>";
+			showOrder += "<TD><B>"+data.cart[order].tprice+"</B> </TD>";
+			showOrder += "</TR>";
+			//alert(showOrder);
+			$("#buy_cart").append(showOrder);
+		}	
+
+	}
+	//构建总价
+	var totalPrice = "一共 <b>"+data.totalprice+"</b>  元";					
+	$("#total_price").html(totalPrice);
+	$("#total_price").show();
+	$("#balance").show();	
+	$("#notchoose").hide();		
+	if( false == showHelp )
+	{
+		if( 0 != data.cart.length )
+		{
+			var modifyNotice = "可以直接编辑“数量”更新订单，修改数字后按回车键确认即可。";
+			var modifyTitle = "您知道吗？";
+			showHelp = true;
+			showTips("#menu_" + data.cart[0].id,modifyTitle,modifyNotice);
+		}			
+	}
+	//删除空的菜单
+	$("tr[id^='menu_']").each(function(){		
+		var find = false;
+		for( var order in data.cart )
+		{
+			if( data.cart[order].id == $(this).find("input").attr("alt") )
+			{
+				find = true;
+				break;
+			}
+		}
+		if( false == find )
+		{
+			$(this).remove();
+		}
+	}	
+	);
+	//生成元素之后再绑定响应事件
+	$('.updatecart').bind('blur',function(event){
+		//alert("blur");
+		var id = $(this).attr("alt");
+		var newNum = $(this).attr("value");
+		var oldNum = $(this).next().attr("value");
+		updateCart(id,newNum,oldNum);
+	}	
+	);
+	$('.updatecart').bind('keypress',function(event){
+		//alert(event.which);
+		if( event.which != 13 )
+		{
+			return;
+		}
+		//alert("null");
+		var id = $(this).attr("alt");
+		var newNum = $(this).attr("value");
+		var oldNum = $(this).next().attr("value");
+		updateCart(id,newNum,oldNum);
+		//alert("id:"+id+" newNum:"+newNum+" oldNum:"+oldNum);
+	}	
+	);
+	//绑定删除事件
+	$('.clearcart').bind('click',function(event){
+		//alert("clear");
+		var id = $(this).attr("alt");
+		var newNum = 0;
+		var oldNum = $(this).next().attr("value");
+		updateCart(id,newNum,oldNum);
+	}	
+	);
+}
+
+function showTips( posContainer,helpTitle,helpContent )
+{
+		$("#tip").hide();
+		var offset= $(posContainer).offset();	
+		$("#tip").css({
+		"left": offset.left - 75,
+		"top": offset.top	+ 15
+		});
+		
+		$("#tipstitle").empty();
+		$("#tipstitle").html(helpTitle);
+		$("#tipscontent").empty();
+		$("#tipscontent").html(helpContent);
+		$("#tip").show( 400 );	
+}
+//购物车结束
+/////////////////////////////////////////////////////////////////////////////////////
+//开始处理“我的订单
+function genMyList()
+{
+	//生成表单头
+	$("#confirm_table").empty();
+	$("#confirm_table").append('<tr><td bgcolor="#EAEAEA">单号</td><td bgcolor="#EAEAEA">份数</td> <td bgcolor="#EAEAEA">下单时间</td><td bgcolor="#EAEAEA">合计</td><td bgcolor="#EAEAEA">操作</td></tr>');
+	//开始请求后台数据
+	$.post("/songfou/public/index.php?controller=order&action=show",null,function (data, textStatus){			
+		if( 0 != data.code )
+		{
+			alert(data.msg);
+			//location.reload();
+			return;
+		}
+		//生成订单列表
+		for( var idx in data.orders )
+		{
+			$("#confirm_table").append('<tr><td>' +
+					data.orders[idx].no +
+					'</td><td>' +
+					data.orders[idx].num +
+					'</td> <td>' +
+					data.orders[idx].time +
+					'</td><td>' +
+					data.orders[idx].price +
+					'</td><td><a href="#" class="remind_order" alt="' +data.orders[idx].no +'">催单</a></td></tr>');
+		}
+		//侦听事件
+		$(".remind_order").bind('click',function(event){
+						var id = $(this).attr("alt");	
+						remindOrder(id);	
+					}
+					);	
+		//显示订单
+		$("#thedayorders").show(400);
+	},"json");	
+}
+
+function remindOrder( id )
+{
+	//alert("/songfou/public/index.php?controller=order&action=remind&order_no=" + id);
+	$.get("/songfou/public/index.php?controller=order&action=remind&order_no=" + id,null,function (data){				
+		alert(data.msg);
+	},"json");
+	
+}
+//我的订单结束
+/////////////////////////////////////////////////////////////////////////////////////
+//显示公告栏
+function showBoard()
+{
+	$.get("/songfou/public/index.php?controller=board&action=index",null,function (data){				
+		//alert(data.msg);
+		if( 0 == data.code )
+		{
+			var offset= $("#main_content :nth-child(2)").offset();	
+			$("#tip").css({
+			"left": offset.left+160,
+			"top": offset.top - 80	
+			});
+		
+			$("#tipstitle").empty();
+			$("#tipstitle").html("送否公告");
+			$("#tipscontent").empty();
+			var cnt = 1;
+			for( var idx in data.boards )
+			{				
+				$("#tipscontent").append(cnt + ":" + data.boards[idx].content + "<br>");
+				cnt++;
+			}
+			$("#tip").show();
+		}
+	},"json");
+}
+/////////////////////////////////////////////////////////////////////////////////////
+//开始绑定事件
+$(document).ready(function(){
+	//显示公告
+	showBoard();
+	//关闭公告 closeTips
+	$('#closeTips').bind('click',function(event){
+		$("#tip").fadeOut(1000);		
+	}
+	);	
+	//查看订单
+	$('#showmyorder').bind('click',function(event){
+		var offset= $("#showmyorder").offset();	
+		$("#thedayorders").css({
+			left: offset.left - 183,
+			top: offset.top + 25
+		});
+		genMyList();		
+	}
+	);	
+	//关闭查看订单
+	$('#closeorders').bind('click',function(event){		
+		$("#thedayorders").fadeOut(1000);
+	}
+	);	
+	//处理添加到购物车
+	$('.addtocart').bind('click',function(event){
+		var id = $(this).attr("id");			
+		addCart( id );		
+	}
+	);
+	//处理更新菜单数量
+	
+	$('.updatecart').bind('blur',function(event){
+		var id = $(this).attr("alt");
+		var newNum = $(this).attr("value");
+		var oldNum = $(this).next().attr("value");
+		updateCart(id,newNum,oldNum);
+	}	
+	);
+	
+	$('.updatecart').bind('keypress',function(event){
+		//alert(event.which);
+		//updateCart( id,newNum,oldNum,event,type )
+		if( event.which != 13 )
+		{
+			return;
+		}
+		//alert("null");
+		var id = $(this).attr("alt");
+		var newNum = $(this).attr("value");
+		var oldNum = $(this).next().attr("value");
+		updateCart(id,newNum,oldNum);
+	}	
+	);
+	
+	//绑定删除事件
+	$('.clearcart').bind('click',function(event){
+		//alert("clear");
+		var id = $(this).attr("alt");
+		var newNum = 0;
+		var oldNum = $(this).next().attr("value");
+		updateCart(id,newNum,oldNum);
+	}	
+	);	
+	//绑定提交事件
+	$('#balance').bind('click',function(event){
+		//alert("clear");
+		balanceCart();
+	}	
+	);	
+	//ajax请求开始与结束处理
+	//ajax超时设置
+	$.ajaxSetup(
+	{
+		timeout:2 *1000
+	}
+	);
+	
+	//请求全局错误处理
+	$("#loading").ajaxError(
+		function(e, xhr, settings, exception) {
+			alert('向后台请求：<' + settings.url + '>时出错。请重试。\n错误原因:' + exception);
+			location.reload();	
+		}
+		);	
+	/* Ajax过渡效果 */	
+	$("#loading").ajaxStart(function(){
+		//alert("start");
+		isLoading = true;
+		var offset= $("#main_content :nth-child(2)").offset();	
+		$("#loading").css({
+		"left": offset.left+160,
+		"top": offset.top - 80	
+		});
+		
+		$("#loading").show();	
+	});
+	
+	$("#loading").ajaxStop(function(){
+		isLoading = false;
+		$("#loading").fadeOut(1000);
+	});
+	
+
+});
