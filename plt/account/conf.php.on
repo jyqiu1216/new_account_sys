@@ -3,11 +3,11 @@
 define("project", "account");
 
 // aws相关配置
-define("aws_key", "AKIAIYQISI2COSJMG2MQ");
-define("aws_scecret", "GsbV/AGpobg2xQtG00f3sTk26bApSn0cmS9etd0n");
-define("aws_region", "us-east-1");
+//define("aws_key", "AKIAIYQISI2COSJMG2MQ");
+//define("aws_scecret", "GsbV/AGpobg2xQtG00f3sTk26bApSn0cmS9etd0n");
+//define("aws_region", "us-east-1");
 
-define("account_mail_sender", "account@leyinetwork.com");
+//define("account_mail_sender", "account@leyinetwork.com");
 
 // 帐号系统所需的表名
 define("account_user_tbl", 		project."_user");
