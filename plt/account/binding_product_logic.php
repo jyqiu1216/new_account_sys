@@ -305,7 +305,7 @@ Class CBindingProductLogic
 			$account_product_response =  $dbClient->query(array(
 		        // "ConsistentRead" => true,
 		        "TableName" => account_product_tbl,
-		        "IndexName" => "rid-index",
+		        "IndexName" => "glb_rid",
 		        // "AttributesToGet" => array("email"),
 		        "KeyConditions" => array(
 		            "rid" => array(
@@ -587,7 +587,7 @@ Class CBindingProductLogic
 			$account_product_response =  $dbClient->query(array(
 		        // "ConsistentRead" => true,
 		        "TableName" => account_product_tbl,
-		        "IndexName" => "rid-index",
+		        "IndexName" => "glb_rid",
 		        // "AttributesToGet" => array("email"),
 		        "KeyConditions" => array(
 		            "rid" => array(

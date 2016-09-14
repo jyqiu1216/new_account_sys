@@ -16,10 +16,9 @@ Class CRegisterLogic
 {
 	// ========================================================================================== //
 	// function ==> 生成rid(标识用户帐号的唯一码)
-	private static function gen_rid($Seq)
+	private static function gen_rid($email)
 	{	
-		$random = rand() % 100;
-		return (string)((int)$Seq * 100 + (rand() % 100));
+		return (string)(md5($email));
 	}
 
 
@@ -47,7 +46,6 @@ Class CRegisterLogic
 		$app_uid = $HttpParams['uid']; 
 		$r_pid = $HttpParams['r_pid'];
 		$sid = $HttpParams['sid'];
-	
 
 		if(null == $r_pid)
 		{
@@ -167,7 +165,6 @@ Class CRegisterLogic
 	        return false;
 		}
 
-
 		$dbClient = CAwsDb::GetInstance()->GetDbClient();
 		$account_product_response = array();
 
@@ -179,7 +176,7 @@ Class CRegisterLogic
 			$account_product_response =  $dbClient->query(array(
 		        // "ConsistentRead" => true,
 		        "TableName" => account_product_tbl,
-		        "IndexName" => "device-index",
+		        "IndexName" => "glb_device",
 		        // "AttributesToGet" => array("email"),
 		        "KeyConditions" => array(
 		            "device" => array(
@@ -588,7 +585,7 @@ Class CRegisterLogic
 			$account_product_response =  $dbClient->query(array(
 		        // "ConsistentRead" => true,
 		        "TableName" => account_product_tbl,
-		        "IndexName" => "device-index",
+		        "IndexName" => "glb_device",
 		        // "AttributesToGet" => array("email"),
 		        "KeyConditions" => array(
 		            "device" => array(
@@ -838,6 +835,7 @@ Class CRegisterLogic
 	        return false;
 		}
 		$email = strtolower($HttpParams['key0']);
+
 		$passwd = $HttpParams['key1'];
 		$th_id = $HttpParams['key2'];
 		$type = $HttpParams['key3'];
@@ -953,7 +951,7 @@ Class CRegisterLogic
 		if(true == $register_flag)
 		{			
 			$active_url = "";					
-			$rid = CRegisterLogic::gen_rid($Seq);
+			$rid = CRegisterLogic::gen_rid($email);
 			CLog::LOG_INFO(array(__FILE__, __LINE__, "register success, send active mail"), $Seq);
 			if(null == $device)
 			{

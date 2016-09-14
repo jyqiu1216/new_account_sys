@@ -143,14 +143,16 @@
             CLogoutLogic::logout($HttpParams, $Seq);
             break; 
         // ****************************************** 注册 ****************************************** //
-        // 帐号注册
+        // 帐号邮箱注册
 		case "register":
             CRegisterLogic::register($HttpParams, $Seq);
 			break;  
-        // 产品游客注册
+        // 产品注册
+		// wa
         case "visitor_register":
             CRegisterLogic::visitor_register($HttpParams, $Seq);
             break;
+		// bob
         case "new_visitor_register":
             CRegisterLogic::new_visitor_register($HttpParams, $Seq);
             break;
@@ -167,9 +169,11 @@
         // ****************************************** 产品登录 ****************************************** //
         // 产品登录
         case "landing":
+		// wa
             CLandingLogic::landing($HttpParams, $Seq);
         	break;
         // 登录状态更新
+		// wa
         case "landing_update":
             CLandingLogic::landing_update($HttpParams, $Seq);
             break;
@@ -194,6 +198,7 @@
         // ****************************************** OP操作 ****************************************** //  
         // 清除帐号
         case "clear_account":
+		// 自助系统
             COpLogic::clear_account($HttpParams, $Seq);
             break;     
         // 检测帐号状态(0: 未注册,1: 未激活,2: 已激活,3. 帐号已修改,4. 多设备登录,是否有异常状态)
@@ -213,9 +218,11 @@
             COpLogic::op_binding_product_email($HttpParams, $Seq);
             break;
         case "get_player_now_sid":
+		// wa
             COpLogic::get_player_now_sid($HttpParams, $Seq);
             break;    
         case "change_sid":
+		// bob
             COpLogic::change_sid($HttpParams, $Seq);
             break;   
 		default:

@@ -498,7 +498,7 @@ Class CLandingLogic
 			$account_product_response =  $dbClient->query(array(
 		        // "ConsistentRead" => true,
 		        "TableName" => account_product_tbl,
-		        "IndexName" => "rid-index",
+		        "IndexName" => "glb_rid",
 		        // "AttributesToGet" => array("email"),
 		        "KeyConditions" => array(
 		            "rid" => array(
@@ -671,7 +671,7 @@ Class CLandingLogic
 			$account_product_response =  $dbClient->query(array(
 		        // "ConsistentRead" => true,
 		        "TableName" => account_product_tbl,
-		        "IndexName" => "rid-index",
+		        "IndexName" => "glb_rid",
 		        // "AttributesToGet" => array("email"),
 		        "KeyConditions" => array(
 		            "rid" => array(
@@ -764,7 +764,7 @@ Class CLandingLogic
 			$account_product_response =  $dbClient->query(array(
 		        // "ConsistentRead" => true,
 		        "TableName" => account_product_tbl,
-		        "IndexName" => "device-index",
+		        "IndexName" => "glb_device",
 		        // "AttributesToGet" => array("email"),
 		        "KeyConditions" => array(
 		            "device" => array(

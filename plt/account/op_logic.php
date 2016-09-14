@@ -660,7 +660,7 @@ Class COpLogic
 			$account_product_response =  $dbClient->query(array(
 		        // "ConsistentRead" => true,
 		        "TableName" => account_product_tbl,
-		        "IndexName" => "device-index",
+		        "IndexName" => "glb_device",
 		        // "AttributesToGet" => array("email"),
 		        "KeyConditions" => array(
 		            "device" => array(
@@ -1003,7 +1003,7 @@ Class COpLogic
 			$account_product_response =  $dbClient->query(array(
 		        // "ConsistentRead" => true,
 		        "TableName" => account_product_tbl,
-		        "IndexName" => "rid-index",
+		        "IndexName" => "glb_rid",
 		        // "AttributesToGet" => array("email"),
 		        "KeyConditions" => array(
 		            "rid" => array(
@@ -1368,7 +1368,7 @@ Class COpLogic
 			{
 				$account_product_response =  $dbClient->query(array(
 			        "TableName" => account_product_tbl,
-			        "IndexName" => "rid-index",
+			        "IndexName" => "glb_rid",
 			        "KeyConditions" => array(
 			            "rid" => array(
 			                "ComparisonOperator" => ComparisonOperator::EQ,
@@ -1443,7 +1443,7 @@ Class COpLogic
 				$account_product_response =  $dbClient->query(array(
 			        // "ConsistentRead" => true,
 			        "TableName" => account_product_tbl,
-			        "IndexName" => "device-index",
+			        "IndexName" => "glb_device",
 			        "KeyConditions" => array(
 			            "device" => array(
 			                "ComparisonOperator" => ComparisonOperator::EQ,

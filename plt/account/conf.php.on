@@ -3,8 +3,8 @@
 define("project", "account");
 
 // aws相关配置
-define("aws_key", "AKIAJSRTNXLMXRPUNDBQ");
-define("aws_scecret", "WtLa1+k9OFet9SII4qA5mNlG1Xtf4xrL0S3xJYxl");
+define("aws_key", "AKIAIYQISI2COSJMG2MQ");
+define("aws_scecret", "GsbV/AGpobg2xQtG00f3sTk26bApSn0cmS9etd0n");
 define("aws_region", "us-east-1");
 
 define("account_mail_sender", "account@leyinetwork.com");
